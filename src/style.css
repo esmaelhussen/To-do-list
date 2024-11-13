@@ -92,3 +92,6 @@ span{
   display: flex;
   justify-content: center;
 }
+.delete-btn{
+  margin-left: 33rem;
+}

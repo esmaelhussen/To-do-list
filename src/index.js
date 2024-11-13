@@ -1,61 +1,126 @@
 import './style.css';
+import { toggleTaskCompletion, clearCompletedTasks } from './clearAll.js';
+import { addDragAndDropEvents } from './drag&Drop.js';
 
 document.addEventListener('DOMContentLoaded', function () {
-  // Step 1: Array of tasks with properties
-  const tasks = [
-    { description: "Buy groceries", completed: false, index: 1 },
-    { description: "Walk the dog", completed: true, index: 2 },
-    { description: "Finish homework", completed: false, index: 3 },
-    { description: "Clean the house", completed: true, index: 4 }
-  ];
 
-  // Step 2: Function to render tasks
+  let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+ 
   function renderTasks() {
     const taskListContainer = document.querySelector('.all-lists');
-    taskListContainer.innerHTML = ''; // Clear any existing tasks
+    taskListContainer.innerHTML = ''; 
 
-    // Sort tasks by their index (this will ensure they appear in the correct order)
+   
     tasks.sort((a, b) => a.index - b.index);
 
-    // Step 3: Loop through the tasks and create list items
-    tasks.forEach(task => {
+
+    tasks.forEach((task) => {
       const listItem = document.createElement('li');
       listItem.classList.add('task-item');
+      listItem.setAttribute('data-index', task.index); 
+      listItem.setAttribute('draggable', true); 
       
-      // Add task description
+      
+      const checkBox = document.createElement('input');
+      checkBox.type = 'checkbox';
+      checkBox.checked = task.completed;
+      checkBox.addEventListener('change', () => {
+        tasks = toggleTaskCompletion(tasks, task.index);
+        saveTasks(); 
+        renderTasks();
+      });
+
       const taskDescription = document.createElement('span');
       taskDescription.textContent = task.description;
       
-      // Style completed tasks with a strikethrough
+   
       if (task.completed) {
         taskDescription.style.textDecoration = 'line-through';
         taskDescription.style.color = '#A9A9A9';
       }
 
-      // Add a checkbox to toggle completion status
-      const checkBox = document.createElement('input');
-      checkBox.type = 'checkbox';
-      checkBox.checked = task.completed;
-      checkBox.addEventListener('change', () => toggleTaskCompletion(task.index));
+   
+      taskDescription.addEventListener('dblclick', () => editTaskDescription(task.index));
 
-      // Append the elements to the list item
+   
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.classList.add('delete-btn');
+      deleteButton.addEventListener('click', () => deleteTask(task.index));
+
+   
       listItem.appendChild(checkBox);
       listItem.appendChild(taskDescription);
+      listItem.appendChild(deleteButton);
       
-      // Append the list item to the task list
+     
       taskListContainer.appendChild(listItem);
     });
+
+    
+    addDragAndDropEvents(taskListContainer, tasks, renderTasks, saveTasks);
   }
 
-  // Step 4: Function to toggle task completion
-  function toggleTaskCompletion(taskIndex) {
+
+  function addTask(description) {
+    const newTask = {
+      description,
+      completed: false,
+      index: tasks.length + 1
+    };
+
+    tasks.push(newTask); 
+    saveTasks();
+    renderTasks(); 
+  }
+
+  function deleteTask(taskIndex) {
+    tasks = tasks.filter(task => task.index !== taskIndex);
+
+    tasks.forEach((task, idx) => {
+      task.index = idx + 1;
+    });
+
+    saveTasks(); 
+    renderTasks(); 
+  }
+
+  
+  function editTaskDescription(taskIndex) {
     const task = tasks.find(t => t.index === taskIndex);
-    if (task) {
-      task.completed = !task.completed;
-      renderTasks(); // Re-render tasks after changing completion status
+    const newDescription = prompt('Edit task description:', task.description);
+    if (newDescription) {
+      task.description = newDescription;
+      saveTasks(); 
+      renderTasks(); 
     }
   }
 
-  // Step 5: Initialize by rendering tasks
+
+  function saveTasks() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }
+
+
+  const addButton = document.querySelector('.btn-add');
+  const inputField = document.querySelector('.input');
+  addButton.addEventListener('click', () => {
+    const taskDescription = inputField.value.trim();
+    if (taskDescription) {
+      addTask(taskDescription); 
+      inputField.value = ''; 
+    }
+  });
+
+  
+  const clearButton = document.querySelector('.btn-clear');
+  clearButton.addEventListener('click', () => {
+    tasks = clearCompletedTasks(tasks); 
+    saveTasks(); 
+    renderTasks(); 
+  });
+
+
   renderTasks();
 });
