@@ -52,6 +52,13 @@
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+- **first clone it using   :**
+git clone https://github.com/esmaelhussen/To-do-list.git
+- **then download webpack using  :**
+npm install webpack webpack-cli --save-dev
+- **then run it using   :**
+npm start
+
 ## 🚀 Live Demo <a name="live-demo"></a>
 
 - [Live Demo Link](https://esmaelhussen.github.io/To-do-list/)
