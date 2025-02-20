@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "\"To do list' is a tool designed to help you organize your daily tasks. It presents a list of activities you need to complete and gives you the ability to mark them as done. You will create a straightforward website to implement this functionality, using ES6 and Webpack!\"",
   "private": true,
+  "homepage": "https://esmaelhussen.github.io/to-do-list",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack serve --open",
