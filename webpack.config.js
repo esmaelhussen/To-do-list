@@ -2,11 +2,11 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  mode: "development",
+  mode: "production",
   entry: {
-    index:'./src/index.js',
+    index: './src/index.js',
   },
-  devtool:'inline-source-map',
+  devtool: 'inline-source-map',
   devServer: {
     static: "./dist",
   },
@@ -30,6 +30,6 @@ module.exports = {
     ],
   },
   optimization: {
-   runtimeChunk:'single'
-    },
+    runtimeChunk: 'single'
+  },
 };
